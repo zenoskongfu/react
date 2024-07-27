@@ -43,6 +43,7 @@ export function flushSyncCallbacksOnlyInLegacyMode() {
   // it might make more sense for the queue to be a list of roots instead of a
   // list of generic callbacks. Then we can have two: one for legacy roots, one
   // for concurrent roots. And this method would only flush the legacy ones.
+  // 同步清空，更新队列
   if (includesLegacySyncCallbacks) {
     flushSyncCallbacks();
   }
@@ -63,6 +64,7 @@ export function flushSyncCallbacks() {
       for (; i < queue.length; i++) {
         let callback = queue[i];
         do {
+          // 不支持中断
           callback = callback(isSync);
         } while (callback !== null);
       }

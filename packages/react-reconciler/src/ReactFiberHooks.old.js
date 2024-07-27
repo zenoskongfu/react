@@ -632,6 +632,7 @@ export function resetHooksAfterThrow(): void {
   localIdCounter = 0;
 }
 
+// 创建hook的函数
 function mountWorkInProgressHook(): Hook {
   const hook: Hook = {
     memoizedState: null,
@@ -643,16 +644,20 @@ function mountWorkInProgressHook(): Hook {
     next: null,
   };
 
+  // 当前没有更新的hook，work in progress hook表示正在工作的hook
+  // 这里的hook表示useState，useEffect这样的hook
   if (workInProgressHook === null) {
     // This is the first hook in the list
     currentlyRenderingFiber.memoizedState = workInProgressHook = hook;
   } else {
     // Append to the end of the list
+    // workInProgressHook 始终指向链表的末尾，为什么
     workInProgressHook = workInProgressHook.next = hook;
   }
   return workInProgressHook;
 }
 
+// 这是更新hook的函数，不是创建hook的函数
 function updateWorkInProgressHook(): Hook {
   // This function is used both for updates and for re-renders triggered by a
   // render phase update. It assumes there is either a current hook we can
@@ -693,6 +698,7 @@ function updateWorkInProgressHook(): Hook {
 
     currentHook = nextCurrentHook;
 
+    // 为什么创建一个新的hook
     const newHook: Hook = {
       memoizedState: currentHook.memoizedState,
 

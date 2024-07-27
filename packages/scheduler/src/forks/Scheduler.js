@@ -561,6 +561,7 @@ if (typeof localSetImmediate === 'function') {
   // If other browsers ever implement it, it's better to use it.
   // Although both of these would be inferior to native scheduling.
   schedulePerformWorkUntilDeadline = () => {
+    // 用setImmediate做异步
     localSetImmediate(performWorkUntilDeadline);
   };
 } else if (typeof MessageChannel !== 'undefined') {
@@ -569,6 +570,7 @@ if (typeof localSetImmediate === 'function') {
   const channel = new MessageChannel();
   const port = channel.port2;
   channel.port1.onmessage = performWorkUntilDeadline;
+  // 用postMessage做异步
   schedulePerformWorkUntilDeadline = () => {
     port.postMessage(null);
   };
@@ -583,10 +585,11 @@ function requestHostCallback(callback) {
   scheduledHostCallback = callback;
   if (!isMessageLoopRunning) {
     isMessageLoopRunning = true;
+
     schedulePerformWorkUntilDeadline();
   }
 }
-
+// 用setTimeout做异步效果
 function requestHostTimeout(callback, ms) {
   taskTimeoutID = localSetTimeout(() => {
     callback(getCurrentTime());
